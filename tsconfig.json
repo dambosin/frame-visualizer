@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["dom", "dom.iterable", "esnext", "ES6"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -12,11 +12,14 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "plugins": [
       {
         "name": "next"
       }
     ],
+    "types": ["reflect-metadata"], 
     "paths": {
       "@/*": ["./src/*"]
     }

@@ -10,9 +10,11 @@
     "test": "jest"
   },
   "dependencies": {
+    "inversify": "^6.0.2",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
+    "reflect-metadata": "^0.2.2",
     "typescript-eslint": "^7.11.0"
   },
   "devDependencies": {
