@@ -1,6 +1,8 @@
 import {Container, interfaces} from 'inversify';
 
-export const TYPES = {};
+export const TYPES = {
+    AutoMapper: Symbol.for('AutoMapper'),
+};
 
 export interface IContainerBuilder {
     build(): Container;
