@@ -19,7 +19,7 @@
         "name": "next"
       }
     ],
-    "types": ["reflect-metadata"], 
+    "types": ["reflect-metadata", "node", "react", "react-dom", "jest"], 
     "paths": {
       "@/*": ["./src/*"]
     }
