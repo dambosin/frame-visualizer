@@ -1,6 +1,7 @@
 import {Rectangle} from '@/common/types';
 import {FrameModel, FrameSaveModel, FrameServiceErrorCode, FrameViewModel, IFrameService} from './types';
 import fs from 'fs';
+import path from 'path';
 import {inject, injectable} from 'inversify';
 import {TYPES} from '@/common/inversify/types';
 import type {IMapper} from '@/common/auto-mapper/types';
@@ -8,10 +9,13 @@ import 'reflect-metadata';
 
 @injectable()
 export class FrameService implements IFrameService {
-    private readonly _fileName = 'framesDB.json';
+    private readonly _fileName: string;
+    private readonly _folder: string;
     private readonly _mapper: IMapper;
 
-    constructor(@inject(TYPES.AutoMapper) mapper: IMapper) {
+    constructor(@inject(TYPES.AutoMapper) mapper: IMapper, framesFolder: string, fileDB: string) {
+        this._folder = path.join(__dirname, framesFolder);
+        this._fileName = fileDB;
         this._mapper = mapper;
     }
 
@@ -20,39 +24,33 @@ export class FrameService implements IFrameService {
     }
 
     saveFrame(frame: FrameSaveModel): void {
-        frame.image.arrayBuffer().then((arrayBuffer) => {
-            const data = Buffer.from(arrayBuffer);
-            const currentDate = new Date();
-            const imageSrc = `${currentDate.toISOString().replace(':', '-').replace('.', '_')}.jpg`;
-            fs.writeFile(imageSrc, data, (err) => {
-                if (err) {
-                    console.error(err);
-                } else {
-                    const frameModel = this._mapper.map<FrameSaveModel, FrameModel>(frame, 'FrameSaveModel', 'FrameModel', {
-                        extraArgs: () => ({imageSrc}),
-                    });
-                    const errors = this.validateFrameHasCorrectModel(frameModel);
-                    if (errors.length > 0) {
-                        console.error(errors, frameModel);
-                    } else {
-                        const frameModels: FrameModel[] = [...this.loadFramesFromFile(), frameModel];
-                        const jsonString = JSON.stringify(frameModels);
-
-                        fs.writeFile(this._fileName, jsonString, (err) => {
-                            if (err) {
-                                console.log('Error writing file:', err);
-                            } else {
-                                console.log('Successfully wrote file');
-                            }
-                        });
-                    }
-                }
-            });
+        const frames = this.loadFramesFromFile();
+        if (frames.some((f) => f.frameId === frame.frameId)) {
+            throw new ReferenceError(FrameServiceErrorCode.ExistingFrameID);
+        }
+        const currentDateAsJson = new Date().toJSON().slice(0, 10);
+        let counter = 0;
+        frames.forEach((frame) => {
+            if (frame.imageSrc.includes(currentDateAsJson)) {
+                counter++;
+            }
         });
+        const imageSrc = currentDateAsJson + '_' + counter + '.jpg';
+        const imagePath = path.join(this._folder, 'frames', imageSrc);
+        fs.writeFileSync(imagePath, frame.image, 'binary');
+        const newFrameModels = [
+            ...frames,
+            this._mapper.map<FrameSaveModel, FrameModel>(frame, 'FrameSaveModel', 'FrameModel', {
+                extraArgs: () => ({imageSrc}),
+            }),
+        ];
+        const framesPath = path.join(this._folder, this._fileName);
+        fs.writeFileSync(framesPath, JSON.stringify(newFrameModels));
     }
 
     private loadFramesFromFile(): FrameModel[] {
-        const josnString = fs.readFileSync('./data.json', 'utf-8');
+        const dataPath = path.join(this._folder, this._fileName);
+        const josnString = fs.readFileSync(dataPath, 'utf-8');
         try {
             const frames: FrameModel[] = JSON.parse(josnString);
 

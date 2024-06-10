@@ -1,15 +1,10 @@
-import {createMapper} from '@automapper/core';
-import {pojos} from '@automapper/pojos';
 import {FrameMapping} from './mapper';
 import {FrameModel, FrameSaveModel, FrameViewModel} from './types';
+import {getMapper} from '@/common/testUtils';
 
 describe('FrameMapping', () => {
+    const mapper = getMapper([new FrameMapping()]);
     it('Mapping from FrameModel to FrameViewModel', () => {
-        const mapper = createMapper({
-            strategyInitializer: pojos(),
-        });
-        new FrameMapping().createMappings(mapper);
-
         const frameModel: FrameModel = {
             id: '1',
             frameId: '11',
@@ -34,11 +29,6 @@ describe('FrameMapping', () => {
         expect(result.imageSrc).toEqual(frameModel.imageSrc);
     });
     it('Mapping from FrameSaveModel to FrameModel', () => {
-        const mapper = createMapper({
-            strategyInitializer: pojos(),
-        });
-        new FrameMapping().createMappings(mapper);
-
         const frameSaveModel: FrameSaveModel = {
             frameId: '11',
             frameSize: {
@@ -50,7 +40,7 @@ describe('FrameMapping', () => {
                 width: 100,
                 height: 100,
             },
-            image: {} as File,
+            image: Buffer.from('some data'),
         };
 
         const result = mapper.map<FrameSaveModel, FrameModel>(frameSaveModel, 'FrameSaveModel', 'FrameModel', {

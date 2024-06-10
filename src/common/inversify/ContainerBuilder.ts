@@ -12,7 +12,12 @@ export class ContainerBuilder implements IContainerBuilder {
         const mapper = new AutoMapperBuilder().build();
         container.bind<IMapper>(TYPES.AutoMapper).toConstantValue(mapper);
 
-        container.bind<IFrameService>(TYPES.FrameService).to(FrameService);
+        container
+            .bind<IFrameService>(TYPES.FrameService)
+            .toFactory((context) => ({folderPath, fileName}: {folderPath: string; fileName: string}) => {
+                const mapper = context.container.get<IMapper>(TYPES.AutoMapper);
+                return new FrameService(mapper, folderPath, fileName);
+            });
 
         return container;
     }

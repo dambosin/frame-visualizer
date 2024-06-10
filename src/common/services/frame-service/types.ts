@@ -17,7 +17,7 @@ export type FrameViewModel = FrameBaseModel & {
 };
 
 export type FrameSaveModel = FrameBaseModel & {
-    image: File;
+    image: Buffer;
 };
 
 export type FrameSaveModelAdditionalArgs = 'imageSrc';
@@ -29,6 +29,7 @@ export type FrameModel = FrameViewModel & {
 export enum FrameServiceErrorCode {
     MissedModel = 'FrameService.MissedModel',
     MissedID = 'FrameService.MissedID',
+    ExistingFrameID = 'FrameService.ExistingFrameID',
     MissedFrameID = 'FrameService.MissedFrameID',
     MissedImage = 'FrameService.MissedImage',
     MissedPrice = 'FrameService.MissedPrice',
