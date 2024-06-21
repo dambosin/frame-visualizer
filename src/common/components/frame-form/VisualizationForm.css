@@ -1,0 +1,71 @@
+.frame-form {
+    display: flex;
+    background-image: url(../../../../public/form-bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 0 50%;
+    width: 70%;
+}
+
+.frame-form__inputs {
+    flex-grow: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+    margin: 50px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px solid black;
+    color: white;
+}
+
+.frame-form__file-input {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+}
+
+.frame-form__file-input-image { 
+    color: white;
+}
+
+.frame-form__modal {
+    position: relative;
+    width: 1000px;
+    height: 800px;
+    background-color: white;
+}
+
+.frame-form__modal-header {
+    width: 1000px;
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+}
+
+.frame-form__modal-close-button {
+    position: absolute;
+    right: 16px;
+}
+
+.frame-form__modal-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.frame-form__frame-input {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+
+.frame-form__frame-input-button {
+    flex-grow: 2;
+}

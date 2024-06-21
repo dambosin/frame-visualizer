@@ -1,0 +1,12 @@
+.label-hoc {
+    display: flex;
+    gap: 8px;
+}
+
+.label-hoc_row {
+    flex-direction: row;
+}
+
+.label-hoc_column {
+    flex-direction: column;
+}
