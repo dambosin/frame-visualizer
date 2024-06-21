@@ -7,6 +7,6 @@ export function useFrames(): FrameViewModel[] {
     const frameService = useFrameService();
     useEffect(() => {
         frameService.getFrames().then((result) => setFrames(result));
-    }, []);
+    }, [frameService]);
     return frames?.length ? frames : [];
 }
