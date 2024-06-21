@@ -1,11 +1,16 @@
+import {FrameViewModel} from '@/common/services/frame-service/types';
 import {Rectangle} from '@/common/types';
-import {VisualizationModel} from '../frame-selector/types';
-import {FrameViewModel} from '@/common/services/FrameService/types';
 
 export type VisualizationFormProps = {
     visualizationSize: Rectangle;
     frameOptions: FrameViewModel[];
     onSubmit: (model: VisualizationModel) => void;
+};
+
+export type VisualizationModel = {
+    image?: File;
+    visualizationSize: Rectangle;
+    frames: FrameViewModel[];
 };
 
 export type VisualizationFormErrors = {

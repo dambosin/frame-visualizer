@@ -1,8 +1,8 @@
 'use client';
 
-import {VisualizationModel} from '@/app/frame-visualizer/types';
 import {useEffect, useRef} from 'react';
 import {useCanvas} from './hook';
+import {VisualizationModel} from '../../frame-form/types';
 
 export function VisualizationCanvas(props: VisualizationModel) {
     const canvasRef = useRef<HTMLCanvasElement>(null);

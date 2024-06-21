@@ -1,8 +1,7 @@
 import {Rectangle} from '@/common/types';
-import {VisualizationFormErrors, VisualizationFormProps, useVisualizationFormReturnType} from './types';
+import {VisualizationFormErrors, VisualizationFormProps, VisualizationModel, useVisualizationFormReturnType} from './types';
 import {useState} from 'react';
 import {FrameViewModel} from '@/common/services/frame-service/types';
-import {VisualizationModel} from '@/app/frame-visualizer/types';
 
 function isSizeValid(size: Rectangle, minSize: Rectangle, maxSize: Rectangle): boolean {
     return (
