@@ -38,6 +38,7 @@
     ],
     "n/no-missing-import": "off",
     "n/no-unsupported-features/node-builtins": "off",
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unnecessary-type-constraint": "off"
   } 
 }

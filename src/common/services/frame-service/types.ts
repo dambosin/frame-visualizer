@@ -1,7 +1,7 @@
 import {Rectangle} from '@/common/types';
 
 export interface IFrameService {
-    getFrames(): FrameViewModel[];
+    getFrames(): Promise<FrameViewModel[]>;
     saveFrame(frame: FrameSaveModel): void;
 }
 
@@ -13,7 +13,7 @@ export type FrameBaseModel = {
 };
 
 export type FrameViewModel = FrameBaseModel & {
-    imageSrc: string;
+    image: string;
 };
 
 export type FrameSaveModel = FrameBaseModel & {
