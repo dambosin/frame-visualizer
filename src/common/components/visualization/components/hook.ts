@@ -100,14 +100,13 @@ export function useCanvas({canvas}: UseCanvasProps): UseCanvasReturn {
             image.onload = () => {
                 function clip(localRect: Rectangle, numberOfEdges = 4, frameDrawModel: FrameViewModel) {
                     if (ctx) {
-                        const delta =
-                            (Math.tan(((360 / numberOfEdges / 2) * Math.PI) / 180) * frameDrawModel.visualizationFrameSize.height) / 2;
+                        const delta = Math.tan(((360 / numberOfEdges / 2) * Math.PI) / 180) * frameDrawModel.visualizationFrameSize.height;
                         ctx.beginPath();
-                        ctx.moveTo(-localRect.width / 2 - delta, -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height / 2);
-                        ctx.lineTo(localRect.width / 2 + delta, -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height / 2);
+                        ctx.moveTo(-localRect.width / 2 - delta, -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height);
+                        ctx.lineTo(localRect.width / 2 + delta, -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height);
                         ctx.lineTo(localRect.width / 2, -localRect.height / 2);
                         ctx.lineTo(-localRect.width / 2, -localRect.height / 2);
-                        ctx.lineTo(-localRect.width / 2 - delta, -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height / 2);
+                        ctx.lineTo(-localRect.width / 2 - delta, -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height);
                         ctx.clip();
                     }
                 }
@@ -115,20 +114,20 @@ export function useCanvas({canvas}: UseCanvasProps): UseCanvasReturn {
                     if (ctx) {
                         ctx.save();
                         const pos: Coordinates = {
-                            x: -localRect.width / 2 - frameDrawModel.visualizationFrameSize.width / 2,
-                            y: -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height / 2,
+                            x: -localRect.width / 2 - frameDrawModel.visualizationFrameSize.width,
+                            y: -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height,
                         };
                         ctx.rotate((2 / numberOfEdges) * edge * Math.PI);
                         clip(localRect, numberOfEdges, frameDrawModel);
-                        while (pos.x < localRect.width / 2 + frameDrawModel.visualizationFrameSize.width / 2) {
+                        while (pos.x < localRect.width / 2 + frameDrawModel.visualizationFrameSize.width) {
                             ctx.drawImage(
                                 image,
                                 pos.x,
                                 pos.y,
-                                frameDrawModel.visualizationFrameSize.width / 2,
-                                frameDrawModel.visualizationFrameSize.height / 2
+                                frameDrawModel.visualizationFrameSize.width,
+                                frameDrawModel.visualizationFrameSize.height
                             );
-                            pos.x += frameDrawModel.visualizationFrameSize.width / 2;
+                            pos.x += frameDrawModel.visualizationFrameSize.width;
                         }
                         ctx.restore();
                     }
