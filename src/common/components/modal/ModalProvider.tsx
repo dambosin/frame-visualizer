@@ -1,32 +1,57 @@
 'use client';
-import React, {ReactNode, createContext, useCallback, useState} from 'react';
-import './ModalProvider.css';
+
+import React, {FC, createContext, useState} from 'react';
+import classes from './ModalProvider.module.css';
 
 type ModalContextProps = {
-    openModal: (modal: ReactNode) => void;
+    openModal: () => void;
     closeModal: () => void;
+    setModalContent: (content: FC | undefined) => void;
+    isOpen: boolean;
 };
 
-export const ModalContext = createContext<ModalContextProps>({openModal: () => {}, closeModal: () => {}});
+export const ModalContext = createContext<ModalContextProps>({
+    openModal: () => {},
+    closeModal: () => {},
+    setModalContent: () => {},
+    isOpen: false,
+} as ModalContextProps);
 
-type ModalProviderProps = {
-    children: ReactNode;
-};
+export function ModalProvider({children}: {children: React.ReactNode}) {
+    const [Content, setContent] = useState<FC | undefined>();
+    const [isOpen, setIsOpen] = useState(false);
 
-export function ModalProvider({children}: ModalProviderProps) {
-    const [content, setContent] = useState<ReactNode>();
-    const handleContentChange = useCallback((content: ReactNode) => {
-        setContent(content);
-    }, []);
-
-    const openModal = useCallback((modal: ReactNode) => handleContentChange(modal), [handleContentChange]);
-
-    const closeModal = useCallback(() => handleContentChange(undefined), [handleContentChange]);
+    function setModalContent(content: FC | undefined) {
+        setContent(() => content);
+    }
+    const Component = Content;
 
     return (
-        <ModalContext.Provider value={{openModal, closeModal}}>
-            <div className={`${content ? '' : 'modal-provider_hidden'} modal-provider`}>{content}</div>
+        <ModalContext.Provider value={{openModal: () => setIsOpen(true), closeModal: () => setIsOpen(false), setModalContent, isOpen}}>
+            {isOpen && Component ? (
+                <Modal onClose={() => setIsOpen(false)}>
+                    <Component />
+                </Modal>
+            ) : null}
             {children}
         </ModalContext.Provider>
+    );
+}
+
+type ModalProps = {
+    children?: React.ReactNode;
+    onClose: () => void;
+};
+
+export function Modal({onClose, children}: ModalProps) {
+    return (
+        <div className={classes.modal__background}>
+            <div className={classes.modal}>
+                <button onClick={onClose} className={classes.modal__closeButton}>
+                    X
+                </button>
+                {children}
+            </div>
+        </div>
     );
 }

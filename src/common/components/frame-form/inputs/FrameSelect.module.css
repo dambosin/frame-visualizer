@@ -1,0 +1,23 @@
+.frameSelect__modalHeader {
+    width: 1000px;
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+    margin: 0;
+}
+
+.frameSelect__modalContent {
+    padding: 16px;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.frameSelect__frameInput {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
