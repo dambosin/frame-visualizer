@@ -52,6 +52,7 @@ export function useVisualizationForm({frameOptions, onSubmit, visualizationSize}
             setModel({...model, frames});
             setErrors({...errors, frames: ''});
         } else {
+            setModel({...model, frames: []});
             setErrors({...errors, frames: 'Must be selected at least one frame'});
         }
     }
