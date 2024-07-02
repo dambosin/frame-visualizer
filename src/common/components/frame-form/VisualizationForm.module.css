@@ -1,0 +1,32 @@
+.frameForm {
+    display: flex;
+    background-image: url(../../../../public/form-bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 0 50%;
+    width: 70%;
+}
+
+.frameForm__inputs {
+    flex-grow: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+    margin: 50px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px solid black;
+    color: white;
+}
+
+.frame-form__file-input {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+}
+
+.frame-form__file-input-image { 
+    color: white;
+}

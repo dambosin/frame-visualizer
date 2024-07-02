@@ -1,7 +1,8 @@
-import {useContext, useEffect, useMemo, useState} from 'react';
-import {ModalContext} from '../../modal/ModalProvider';
+import {useCallback, useEffect, useMemo} from 'react';
 import {MemoizedFrameCard} from '../../frame-card/FrameCard';
 import {FrameViewModel} from '@/common/services/frame-service/types';
+import classes from './FrameSelect.module.css';
+import {useModal} from '../../modal/hook';
 
 type FrameSelectProps = {
     error?: string;
@@ -11,30 +12,10 @@ type FrameSelectProps = {
 };
 
 export function FrameSelect({frames, options, onChange}: FrameSelectProps) {
-    const [isOpen, setIsOpen] = useState(false);
-    const {openModal, closeModal} = useContext(ModalContext);
+    const {openModal, closeModal, setModalContent, isOpen} = useModal();
 
-    function handleOpen() {
-        setIsOpen(true);
-    }
-
-    function handleClose() {
-        setIsOpen(false);
-    }
-    const header = useMemo(
-        () => (
-            <div className={'frame-form__modal-header'}>
-                <h2>Select Frames</h2>
-                <button className={'frame-form__modal-close-button'} onClick={handleClose}>
-                    X
-                </button>
-            </div>
-        ),
-        []
-    );
-
-    useEffect(() => {
-        function handleChange(frameId: string) {
+    const handleChange = useCallback(
+        (frameId: string) => {
             if (frameId) {
                 if (frames.map((frame) => frame.frameId).includes(frameId)) {
                     onChange(frames.filter((frame) => frame.frameId !== frameId));
@@ -43,45 +24,52 @@ export function FrameSelect({frames, options, onChange}: FrameSelectProps) {
                     if (frame) onChange([...frames, frame]);
                 }
             }
-        }
+        },
+        [frames, onChange, options]
+    );
 
-        const content = (
-            <div className={'frame-form__modal-content'}>
-                {options.map((option) => {
-                    return (
-                        <MemoizedFrameCard
-                            img={option.image}
-                            key={option.frameId}
-                            price={option.price}
-                            onClick={() => handleChange(option.frameId)}
-                            selected={frames.map((frame) => frame.frameId).includes(option.frameId)}
-                        />
-                    );
-                })}
-            </div>
-        );
+    const ModalContent = useMemo(
+        () =>
+            function ModalContent() {
+                return (
+                    <>
+                        <h2 className={classes.frameSelect__modalHeader}>Select Frames</h2>
+                        <div className={classes.frameSelect__modalContent}>
+                            {options.map((option) => {
+                                return (
+                                    <MemoizedFrameCard
+                                        img={option.image}
+                                        key={option.frameId}
+                                        price={option.price}
+                                        onClick={() => handleChange(option.frameId)}
+                                        selected={frames.map((frame) => frame.frameId).includes(option.frameId)}
+                                    />
+                                );
+                            })}
+                        </div>
+                    </>
+                );
+            },
+        [frames, handleChange, options]
+    );
 
-        function open() {
-            openModal(
-                <div className={'frame-form__modal'}>
-                    {header}
-                    {content}
-                </div>
-            );
-        }
+    useEffect(() => {
         if (isOpen) {
-            open();
-        } else {
-            closeModal();
+            setModalContent(ModalContent);
         }
-    }, [isOpen, closeModal, openModal, header, options, frames, onChange]);
+    }, [isOpen, ModalContent, setModalContent, closeModal]);
+
+    const handleOpenModal = useCallback(() => {
+        setModalContent(ModalContent);
+        openModal();
+    }, [openModal, setModalContent, ModalContent]);
 
     return (
         <div className={'frame-form__frame-input'}>
             <label htmlFor={'frame-input'} className={'frame-form__frame-input-label'}>
                 Багет:
             </label>
-            <input type={'button'} id={'frame-input'} className={'frame-form__frame-input-button'} onClick={handleOpen} />
+            <input type={'button'} id={'frame-input'} className={'frame-form__frame-input-button'} onClick={handleOpenModal} />
         </div>
     );
 }
