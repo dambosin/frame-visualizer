@@ -2,7 +2,7 @@
 import React, {useState} from 'react';
 import './styles.css';
 import {VisualizationForm} from '@/common/components/frame-form/VisualizationForm';
-import {VisualizationCanvas} from '@/common/components/visualization/components/Visualization';
+import {VisualizationCanvas} from '@/common/components/visualization/components/VisualizationCanvas';
 import {VisualizationModel} from '@/common/components/frame-form/types';
 
 export function Visualization() {

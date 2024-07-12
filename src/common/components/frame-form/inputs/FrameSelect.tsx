@@ -81,7 +81,7 @@ export function FrameSelectButton({frames, onChange, error}: FrameSelectButtonPr
                 <span>Багет:</span>
             </label>
             <button id="frame-select" className={classes.frameSelect__button} onClick={() => openModal()}>
-                {frames.map((frame) => frame.frameId).join(', fadfdafdafadfafadfadfadf')}
+                {frames.map((frame) => frame.frameId).join(', ')}
             </button>
             {error ? <span className={classes.form__error}>{error}</span> : null}
         </div>

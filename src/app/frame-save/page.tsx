@@ -125,24 +125,42 @@ export default function FrameSave() {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input type="text" name="frameId" value={formData.frameId} onChange={handleFraimIdChange} />
-            <input type="number" name="frameSizeWidth" value={formData.frameSize.width} onChange={handleFrameSizeWidthChange} />
-            <input type="number" name="frameSizeHeight" value={formData.frameSize.height} onChange={handleFrameSizeHeightChange} />
-            <input type="number" name="price" value={formData.price} onChange={handlePriceChange} />
-            <input
-                type="number"
-                name="visualizationFrameSizeWidth"
-                value={formData.visualizationFrameSize.width}
-                onChange={handleVisualizationFrameSizeWidthChange}
-            />
-            <input
-                type="number"
-                name="visualizationFrameSizeHeight"
-                value={formData.visualizationFrameSize.height}
-                onChange={handleVisualizationFrameSizeHeightChange}
-            />
-            <input type="file" name="image" onChange={handleImageChange} />
+        <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column'}}>
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+                <label htmlFor="frameId">Название багета: </label>
+                <input type="text" name="frameId" value={formData.frameId} onChange={handleFraimIdChange} />
+            </div>
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+                <label htmlFor="frameId">Размер багета (для покупателей): </label>
+                <input type="number" name="frameSizeWidth" value={formData.frameSize.width} onChange={handleFrameSizeWidthChange} />
+                <input type="number" name="frameSizeHeight" value={formData.frameSize.height} onChange={handleFrameSizeHeightChange} />
+            </div>
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+                <label htmlFor="frameId">Цена багета за метр: </label>
+
+                <input type="number" name="price" value={formData.price} onChange={handlePriceChange} />
+            </div>
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+                <label htmlFor="frameId">Размер визуализации: </label>
+
+                <input
+                    type="number"
+                    name="visualizationFrameSizeWidth"
+                    value={formData.visualizationFrameSize.width}
+                    onChange={handleVisualizationFrameSizeWidthChange}
+                />
+                <input
+                    type="number"
+                    name="visualizationFrameSizeHeight"
+                    value={formData.visualizationFrameSize.height}
+                    onChange={handleVisualizationFrameSizeHeightChange}
+                />
+            </div>
+            <div style={{display: 'flex', flexDirection: 'row'}}>
+                <label htmlFor="frameId">Фото визуализации: </label>
+                <input type="file" name="image" onChange={handleImageChange} />
+            </div>
+
             <button type="submit">Save</button>
         </form>
     );

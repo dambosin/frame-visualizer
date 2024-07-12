@@ -1,5 +1,5 @@
 import React from 'react';
-import './FrameCard.css';
+import classes from './FrameCard.module.css';
 import Image from 'next/image';
 type FrameCardProps = {
     price: number;
@@ -10,13 +10,16 @@ type FrameCardProps = {
 
 export function FrameCard({img, price, selected = false, onClick}: FrameCardProps) {
     return (
-        <div className={`frame-card ${onClick ? 'frame-card_pointer' : ''} ${selected ? 'frame-card_selected' : ''}`} onClick={onClick}>
+        <div
+            className={`${classes.frameCard} ${onClick ? classes.frameCard_pointer : ''} ${selected ? classes.frameCard_selected : ''}`}
+            onClick={onClick}
+        >
             {img ? (
-                <Image className="frame-card__img" src={`data:image/jpeg;base64,${img}`} width={64} height={64} alt="frame" />
+                <Image className={classes.frameCard__img} src={`data:image/jpeg;base64,${img}`} width={100} height={80} alt="frame" />
             ) : (
-                <div className="frame-card__img frame-card__img_empty"></div>
+                <div className={classes.frameCard__img + ' ' + classes.frameCard__img_empty}></div>
             )}
-            <p className="frame-card__price">{price}</p>
+            <p className={classes.frameCard__price}>{price}</p>
         </div>
     );
 }
