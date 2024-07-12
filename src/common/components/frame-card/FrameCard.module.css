@@ -1,0 +1,32 @@
+.frameCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100px;
+    height: 130px;
+    padding: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    gap: 8px;
+}
+
+.frameCard_pointer {
+    cursor: pointer;
+}
+
+.frameCard_selected {
+    border: 2px solid black;
+}
+
+.frameCard__price {
+    text-align: center;
+    width: 100%;
+    font-size: 12px;
+}
+
+.frameCard__img {
+    object-fit: cover;
+}
+
+.frameCard__img_empty {
+    background-color: rgba(0, 0, 0, 0.1);
+}

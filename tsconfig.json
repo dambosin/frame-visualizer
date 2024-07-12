@@ -17,9 +17,10 @@
     "plugins": [
       {
         "name": "next"
-      }
+      },
+      { "name": "typescript-plugin-css-modules" }
     ],
-    "types": ["reflect-metadata"], 
+    "types": ["reflect-metadata", "node", "react", "react-dom", "jest"], 
     "paths": {
       "@/*": ["./src/*"]
     }
