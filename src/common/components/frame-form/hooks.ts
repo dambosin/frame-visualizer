@@ -18,11 +18,11 @@ export function useVisualizationForm({model, onChange}: VisualizationFormProps):
             }
             if (
                 model.visualizationSize.width < 10 ||
-                model.visualizationSize.width > 100 ||
+                model.visualizationSize.width > 300 ||
                 model.visualizationSize.height < 10 ||
-                model.visualizationSize.height > 100
+                model.visualizationSize.height > 300
             ) {
-                errors.visualizationSize = 'Значение должно быть в пределах от 10 до 100';
+                errors.visualizationSize = 'Значение должно быть в пределах от 10 до 300';
                 res = false;
             } else {
                 errors.visualizationSize = '';

@@ -63,6 +63,10 @@ export function FrameSelectButton({frames, onChange, error}: FrameSelectButtonPr
         [frames, onChange, options]
     );
 
+    useEffect(() => {
+        onChange(options);
+    }, [options]);
+
     const ModalContent = useMemo(() => {
         return function Modal() {
             return <FrameSelectModal frames={frames} onSelect={handleSelect} options={options} />;

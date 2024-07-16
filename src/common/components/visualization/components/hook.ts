@@ -6,7 +6,7 @@ type UseCanvasProps = {
 };
 
 type UseCanvasReturn = {
-    drawImage: (image: HTMLImageElement, frameSize: Rectangle) => void;
+    drawImage: (image: HTMLImageElement, frameSize: Rectangle, frame: FrameViewModel) => void;
     drawFrame: (frame: FrameViewModel, frameSize: Rectangle) => void;
     clear: () => void;
     save: (linkId: string, fileName: string) => void;
@@ -18,8 +18,7 @@ type Coordinates = {
 };
 
 export function useCanvas({canvas}: UseCanvasProps): UseCanvasReturn {
-    const factor = 15;
-    const frameFactor = factor / 10;
+    const baseFactor = 15;
     function calculateImageCenterPosition(canvasSize: Rectangle): Coordinates {
         return {
             x: canvasSize.width / 2,
@@ -72,15 +71,94 @@ export function useCanvas({canvas}: UseCanvasProps): UseCanvasReturn {
             sh: height,
         };
     }
-    function drawImage(image: HTMLImageElement, frameSizeInit: Rectangle) {
-        const frameSize: Rectangle = {
-            width: frameSizeInit.width * factor,
-            height: frameSizeInit.height * factor,
-        };
+
+    function calcFactor(frameSizeInit: Rectangle): number {
+        const padding = 200;
         if (canvas) {
+            const baseSize = {width: frameSizeInit.width * baseFactor, height: frameSizeInit.height * baseFactor};
+            let factor1 = baseFactor;
+            let factor2 = baseFactor;
+            if (canvas.width < baseSize.width + padding) {
+                factor1 = Math.floor(((canvas.width - padding) / frameSizeInit.width) * 100) / 100;
+            }
+            if (canvas.height < baseSize.height + padding + canvas.width / 2) {
+                factor2 = Math.floor(((canvas.height - padding - canvas.width / 2) / frameSizeInit.height) * 100) / 100;
+            }
+            if (frameSizeInit.width < 30) {
+                factor1 = Math.floor(((30 * baseFactor) / frameSizeInit.width) * 100) / 100;
+            }
+            if (frameSizeInit.height < 40) {
+                factor2 = Math.floor(((40 * baseFactor) / frameSizeInit.height) * 100) / 100;
+            }
+            const factor = Math.min(factor1, factor2);
+            console.log('factor is', factor1, factor2);
+            return factor;
+        }
+
+        return 0;
+    }
+
+    function drawImage(image: HTMLImageElement, frameSizeInit: Rectangle, frame: FrameViewModel) {
+        function drawShadow(localRect: Rectangle, frameDrawModel: FrameViewModel, ctx: CanvasRenderingContext2D) {
+            if (canvas && ctx) {
+                ctx.save();
+                const imageCenterPosition = calculateImageCenterPosition({width: canvas.width, height: canvas.height});
+                ctx.translate(imageCenterPosition.x, imageCenterPosition.y);
+
+                ctx.beginPath();
+                ctx.moveTo(
+                    localRect.width / 2 + frameDrawModel.visualizationFrameSize.height,
+                    -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height
+                );
+                ctx.lineTo(
+                    localRect.width / 2 + frameDrawModel.visualizationFrameSize.height + 1000,
+                    -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height + 1000
+                );
+                ctx.lineTo(
+                    -localRect.width / 2 - frameDrawModel.visualizationFrameSize.height + 1000,
+                    localRect.height / 2 + frameDrawModel.visualizationFrameSize.height + 1000
+                );
+                ctx.lineTo(
+                    -localRect.width / 2 - frameDrawModel.visualizationFrameSize.height,
+                    localRect.height / 2 + frameDrawModel.visualizationFrameSize.height
+                );
+                ctx.lineTo(
+                    localRect.width / 2 + frameDrawModel.visualizationFrameSize.height,
+                    -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height
+                );
+                ctx.clip();
+                ctx.shadowColor = 'black';
+                ctx.shadowBlur = 50;
+                ctx.fillRect(
+                    -localRect.width / 2 - frameDrawModel.visualizationFrameSize.height,
+                    -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height,
+                    localRect.width + frameDrawModel.visualizationFrameSize.height * 2,
+                    localRect.height + frameDrawModel.visualizationFrameSize.height * 2
+                );
+                ctx.restore();
+            }
+        }
+        if (canvas) {
+            const factor = calcFactor(frameSizeInit);
+            const frameSize: Rectangle = {
+                width: frameSizeInit.width * factor,
+                height: frameSizeInit.height * factor,
+            };
             console.log('hook drawImage');
             const ctx = canvas.getContext('2d');
+            const frameFactor = factor / 10;
             if (ctx) {
+                drawShadow(
+                    frameSize,
+                    {
+                        ...frame,
+                        visualizationFrameSize: {
+                            width: frame.visualizationFrameSize.width * frameFactor,
+                            height: frame.visualizationFrameSize.height * frameFactor,
+                        },
+                    },
+                    ctx
+                );
                 const imageCenterPosition = calculateImageCenterPosition({width: canvas.width, height: canvas.height});
                 console.log('hook drawImage 2', imageCenterPosition, canvas);
                 const adjustedImageSize = fitImageInFrame({width: image.width, height: image.height}, frameSize);
@@ -107,51 +185,59 @@ export function useCanvas({canvas}: UseCanvasProps): UseCanvasReturn {
                         height: rect.width,
                     };
                 }
-                function clip(localRect: Rectangle, numberOfEdges = 4, frameDrawModel: FrameViewModel) {
+                function clip(localRect: Rectangle, numberOfEdges = 4, frameDrawModel: FrameViewModel, shadow: boolean = false) {
                     if (ctx) {
-                        const delta =
-                            Math.tan(((360 / numberOfEdges / 2) * Math.PI) / 180) *
-                            frameDrawModel.visualizationFrameSize.height *
-                            frameFactor;
-                        ctx.beginPath();
-                        ctx.moveTo(
-                            -localRect.width / 2 - delta,
-                            -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height * frameFactor
-                        );
-                        ctx.lineTo(
-                            localRect.width / 2 + delta,
-                            -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height * frameFactor
-                        );
-                        ctx.lineTo(localRect.width / 2, -localRect.height / 2);
-                        ctx.lineTo(-localRect.width / 2, -localRect.height / 2);
-                        ctx.lineTo(
-                            -localRect.width / 2 - delta,
-                            -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height * frameFactor
-                        );
-                        ctx.clip();
+                        const delta = Math.tan(((360 / numberOfEdges / 2) * Math.PI) / 180) * frameDrawModel.visualizationFrameSize.height;
+                        if (shadow) {
+                            ctx.shadowColor = 'black';
+                            ctx.shadowBlur = 40;
+                            ctx.fillRect(
+                                -localRect.width / 2 - frameDrawModel.visualizationFrameSize.height,
+                                -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height,
+                                (localRect.width / 2 + frameDrawModel.visualizationFrameSize.height) * 2,
+                                30
+                            );
+                            ctx.shadowBlur = 0;
+                        } else {
+                            ctx.beginPath();
+                            ctx.moveTo(-localRect.width / 2 - delta, -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height);
+                            ctx.lineTo(localRect.width / 2 + delta, -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height);
+                            ctx.lineTo(localRect.width / 2, -localRect.height / 2);
+                            ctx.lineTo(-localRect.width / 2, -localRect.height / 2);
+                            ctx.lineTo(-localRect.width / 2 - delta, -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height);
+                            ctx.clip();
+                        }
                     }
                 }
                 function drawFrameSide(localRect: Rectangle, numberOfEdges: number = 4, edge: number = 0, frameDrawModel: FrameViewModel) {
                     if (ctx) {
                         ctx.save();
                         const pos: Coordinates = {
-                            x: -localRect.width / 2 - frameDrawModel.visualizationFrameSize.width * frameFactor,
-                            y: -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height * frameFactor,
+                            x: -localRect.width / 2 - frameDrawModel.visualizationFrameSize.width,
+                            y: -localRect.height / 2 - frameDrawModel.visualizationFrameSize.height,
                         };
                         ctx.rotate((2 / numberOfEdges) * edge * Math.PI);
                         clip(localRect, numberOfEdges, frameDrawModel);
-                        while (pos.x < localRect.width / 2 + frameDrawModel.visualizationFrameSize.width * frameFactor) {
+                        while (pos.x < localRect.width / 2 + frameDrawModel.visualizationFrameSize.width) {
                             ctx.drawImage(
                                 image,
                                 pos.x,
                                 pos.y,
-                                frameDrawModel.visualizationFrameSize.width * frameFactor,
-                                frameDrawModel.visualizationFrameSize.height * frameFactor
+                                frameDrawModel.visualizationFrameSize.width,
+                                frameDrawModel.visualizationFrameSize.height
                             );
-                            pos.x += frameDrawModel.visualizationFrameSize.width * frameFactor;
+                            pos.x += frameDrawModel.visualizationFrameSize.width;
                         }
                         ctx.restore();
                     }
+                }
+
+                function calcPrice(frame: FrameViewModel): string {
+                    const additionalFrameLength = (frame.visualizationFrameSize.height * 8) / 10;
+                    const perimeter = (frameSizeInit.width + frameSizeInit.height) * 2;
+                    const sum = additionalFrameLength + perimeter;
+                    const finalPrice = Math.ceil(frame.price * sum) / 100;
+                    return finalPrice.toString() + ' BYN';
                 }
 
                 function drawFooter() {
@@ -162,11 +248,15 @@ export function useCanvas({canvas}: UseCanvasProps): UseCanvasReturn {
                         ctx.fillStyle = 'white';
                         const fontSize = 96;
                         ctx.font = `${fontSize}px serif`;
+                        ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
+                        const metrics = ctx.measureText(calcPrice(frame));
+                        console.log(metrics);
+                        ctx.textBaseline = 'alphabetic';
                         ctx.fillText(
-                            frame.price.toString(),
-                            width / 2 - fontSize.toString().length * factor * 2,
-                            canvas.height - width / 2
+                            calcPrice(frame),
+                            width / 2,
+                            canvas.height - width / 2 + (metrics.hangingBaseline - metrics.alphabeticBaseline) / 2
                         );
                         ctx.drawImage(
                             image,
@@ -183,6 +273,8 @@ export function useCanvas({canvas}: UseCanvasProps): UseCanvasReturn {
                 }
                 const numberOfEdges = 4;
                 if (canvas && ctx) {
+                    const factor = calcFactor(frameSizeInit);
+                    const frameFactor = factor / 10;
                     let frameSize: Rectangle = {
                         width: frameSizeInit.width * factor,
                         height: frameSizeInit.height * factor,
@@ -190,7 +282,13 @@ export function useCanvas({canvas}: UseCanvasProps): UseCanvasReturn {
                     const imageCenterPosition = calculateImageCenterPosition({width: canvas.width, height: canvas.height});
                     ctx.translate(imageCenterPosition.x, imageCenterPosition.y);
                     for (let i = 0; i < numberOfEdges; i++) {
-                        drawFrameSide(frameSize, numberOfEdges, i, frame);
+                        drawFrameSide(frameSize, numberOfEdges, i, {
+                            ...frame,
+                            visualizationFrameSize: {
+                                width: frame.visualizationFrameSize.width * frameFactor,
+                                height: frame.visualizationFrameSize.height * frameFactor,
+                            },
+                        });
                         frameSize = rotateRect(frameSize);
                     }
                     ctx.translate(-imageCenterPosition.x, -imageCenterPosition.y);
@@ -206,6 +304,8 @@ export function useCanvas({canvas}: UseCanvasProps): UseCanvasReturn {
             const ctx = canvas.getContext('2d');
             if (ctx) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
             }
         }
     }
