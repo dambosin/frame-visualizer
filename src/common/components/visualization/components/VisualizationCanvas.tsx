@@ -22,7 +22,7 @@ export function VisualizationCanvas(props: VisualizationModel) {
                             clear();
                             drawImage(image, props.visualizationSize, frame);
                             drawFrame(frame, props.visualizationSize);
-                            // delay(200).then(() => save(linkId, frame.frameId));
+                            delay(200).then(() => save(linkId, frame.frameId));
                         });
                     });
                 };
