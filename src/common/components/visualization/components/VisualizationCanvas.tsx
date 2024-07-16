@@ -20,9 +20,9 @@ export function VisualizationCanvas(props: VisualizationModel) {
                     props.frames.forEach((frame, index) => {
                         delay(1000 * index).then(() => {
                             clear();
-                            drawImage(image, props.visualizationSize);
+                            drawImage(image, props.visualizationSize, frame);
                             drawFrame(frame, props.visualizationSize);
-                            delay(200).then(() => save(linkId, frame.frameId));
+                            // delay(200).then(() => save(linkId, frame.frameId));
                         });
                     });
                 };
