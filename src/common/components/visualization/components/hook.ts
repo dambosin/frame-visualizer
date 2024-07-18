@@ -90,9 +90,7 @@ export function useCanvas({canvas}: UseCanvasProps): UseCanvasReturn {
             if (frameSizeInit.height < 40) {
                 factor2 = Math.floor(((40 * baseFactor) / frameSizeInit.height) * 100) / 100;
             }
-            const factor = Math.min(factor1, factor2);
-            console.log('factor is', factor1, factor2);
-            return factor;
+            return Math.min(factor1, factor2);
         }
 
         return 0;
@@ -144,7 +142,6 @@ export function useCanvas({canvas}: UseCanvasProps): UseCanvasReturn {
                 width: frameSizeInit.width * factor,
                 height: frameSizeInit.height * factor,
             };
-            console.log('hook drawImage');
             const ctx = canvas.getContext('2d');
             const frameFactor = factor / 10;
             if (ctx) {
@@ -160,7 +157,6 @@ export function useCanvas({canvas}: UseCanvasProps): UseCanvasReturn {
                     ctx
                 );
                 const imageCenterPosition = calculateImageCenterPosition({width: canvas.width, height: canvas.height});
-                console.log('hook drawImage 2', imageCenterPosition, canvas);
                 const adjustedImageSize = fitImageInFrame({width: image.width, height: image.height}, frameSize);
                 ctx.save();
                 ctx.translate(imageCenterPosition.x, imageCenterPosition.y);
@@ -236,7 +232,7 @@ export function useCanvas({canvas}: UseCanvasProps): UseCanvasReturn {
                     const additionalFrameLength = (frame.visualizationFrameSize.height * 8) / 10;
                     const perimeter = (frameSizeInit.width + frameSizeInit.height) * 2;
                     const sum = additionalFrameLength + perimeter;
-                    const finalPrice = Math.ceil(frame.price * sum) / 100;
+                    const finalPrice = Math.ceil((frame.price * sum) / 100);
                     return finalPrice.toString() + ' BYN';
                 }
 
@@ -251,7 +247,6 @@ export function useCanvas({canvas}: UseCanvasProps): UseCanvasReturn {
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
                         const metrics = ctx.measureText(calcPrice(frame));
-                        console.log(metrics);
                         ctx.textBaseline = 'alphabetic';
                         ctx.fillText(
                             calcPrice(frame),
